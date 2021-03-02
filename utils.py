@@ -39,6 +39,10 @@ def open_device(lib):
     open_name = lib.get_device_name(devenum, 0)
 
     device_id = lib.open_device(open_name)
+
+    set_current(lib, device_id, 100)
+    set_feedback(lib, device_id, pyximc.FeedbackType.FEEDBACK_NONE)
+
     return device_id
 
 
@@ -133,6 +137,7 @@ def set_microstep_mode_256(lib, device_id):
     eng = pyximc.engine_settings_t()
     # Get current engine settings from controller
     result = lib.get_engine_settings(device_id, ctypes.byref(eng))
+
     # Print command return status. It will be 0 if all is OK
     # Change MicrostepMode parameter to MICROSTEP_MODE_FRAC_256
     # (use MICROSTEP_MODE_FRAC_128, MICROSTEP_MODE_FRAC_64 ... for other microstep modes)
@@ -140,4 +145,20 @@ def set_microstep_mode_256(lib, device_id):
     # Write new engine settings to controller
     result = lib.set_engine_settings(device_id, ctypes.byref(eng))
     # Print command return status. It will be 0 if all is OK
+    return repr(result)
+
+
+def set_current(lib, device_id, curr_value):
+    eng = pyximc.engine_settings_t()
+    result = lib.get_engine_settings(device_id, ctypes.byref(eng))
+    eng.NomCurrent = curr_value
+    result = lib.set_engine_settings(device_id, ctypes.byref(eng))
+    return repr(result)
+
+
+def set_feedback(lib, device_id, feedback_type):
+    feedback = pyximc.feedback_settings_t()
+    lib.get_feedback_settings(device_id, ctypes.byref(feedback))
+    feedback.FeedbackType = feedback_type
+    result = lib.set_feedback_settings(device_id, ctypes.byref(feedback))
     return repr(result)

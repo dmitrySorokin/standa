@@ -18,9 +18,10 @@ if __name__ == '__main__':
     print(get_position(lib, device_id))
 
     current_speed = get_speed(lib, device_id)
-    print(current_speed)
+    print('current_speed', current_speed)
     set_speed(lib, device_id, 1024)
 
-    print(move_relative(lib, device_id, -6000, 0))
+    move_relative(lib, device_id, -6000, 0)
+    move_relative(lib, device_id, 6000, 0)
     # move_absolute(lib, device_id, 0, 0)
     close_device(lib, device_id)
